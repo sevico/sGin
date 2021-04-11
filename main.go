@@ -2,12 +2,25 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"swkGin/sGin"
+	"time"
 )
-
+func onlyForV2() sGin.HandlerFunc {
+	return func(c *sGin.Context) {
+		// Start timer
+		t := time.Now()
+		// if a server error occurred
+		c.Fail(500, "Internal Server Error")
+		// Calculate resolution time
+		log.Printf("[%d] %s in %v for group v2", c.StatusCode, c.Req.RequestURI, time.Since(t))
+	}
+}
 func main() {
 	r:=sGin.New()
+	r.Use(sGin.Logger())
+
 	r.GET("/", func(c *sGin.Context) {
 		fmt.Fprintf(c.Writer, "<h1>hello user</h1>")
 	})
