@@ -32,7 +32,7 @@ func main() {
 	r:=sGin.New()
 	r.Static("/assets", "./static")
 
-	r.Use(sGin.Logger())
+	r.Use(sGin.Logger(),sGin.Recovery())
 	r.SetFuncMap(template.FuncMap{
 		"FormatAsDate": FormatAsDate,
 	})
@@ -95,6 +95,11 @@ func main() {
 			"username":c.PostForm("username"),
 			"password":c.PostForm("password"),
 		})
+	})
+	// index out of range for testing Recovery()
+	r.GET("/panic", func(c *sGin.Context) {
+		names := []string{"sss"}
+		c.String(http.StatusOK, names[100])
 	})
 	r.Run(":9999")
 }
